@@ -1,0 +1,28 @@
+class concretevalue {
+	basic() {
+		def i = 2;
+		def j = -10;
+		def a = i + j;
+		def s = i - j;
+		def m = i * j;
+		def d = i / j;
+	}
+
+	severalValues() {
+	    def i = 2;
+        def j = -10;
+        def a = i + j;
+        def s = i - j;
+        def m = i * j;
+        def d = i / j;
+
+        if(i > 1) {
+            i = 1;
+            j = 2;
+        }
+        if(i < 1) {
+            i = 1;
+            j = 2;
+        }
+	}
+}
