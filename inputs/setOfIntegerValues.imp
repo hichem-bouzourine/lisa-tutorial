@@ -1,4 +1,4 @@
-class concretevalue {
+class setOfIntegerValues {
 	basic() {
 		def i = 2;
 		def j = -10;
@@ -23,6 +23,13 @@ class concretevalue {
         if(i < 1) {
             i = 1;
             j = 2;
+        }
+
+        whileStatement () {
+            def i = 0;
+            while(i < 124) {
+                i = i + 1;
+            }
         }
 	}
 }

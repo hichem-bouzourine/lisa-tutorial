@@ -3,11 +3,17 @@ package it.unive.lisa.tutorial;
 import it.unive.lisa.analysis.Lattice;
 import it.unive.lisa.analysis.SemanticException;
 import it.unive.lisa.analysis.SemanticOracle;
+import it.unive.lisa.analysis.lattices.Satisfiability;
 import it.unive.lisa.analysis.nonrelational.value.BaseNonRelationalValueDomain;
+import it.unive.lisa.analysis.nonrelational.value.ValueEnvironment;
 import it.unive.lisa.program.cfg.ProgramPoint;
 import it.unive.lisa.symbolic.value.Constant;
+import it.unive.lisa.symbolic.value.ValueExpression;
+import it.unive.lisa.symbolic.value.Variable;
 import it.unive.lisa.symbolic.value.operator.AdditionOperator;
+import it.unive.lisa.symbolic.value.operator.ComparisonOperator;
 import it.unive.lisa.symbolic.value.operator.binary.BinaryOperator;
+import it.unive.lisa.symbolic.value.operator.binary.ComparisonLt;
 import it.unive.lisa.util.representation.StringRepresentation;
 import it.unive.lisa.util.representation.StructuredRepresentation;
 
@@ -20,6 +26,7 @@ public class SetOfIntegerValues implements BaseNonRelationalValueDomain<SetOfInt
 	public static final SetOfIntegerValues TOP = new SetOfIntegerValues(Integer.MIN_VALUE);
 
 	Set<Integer> values;
+	final int MAX_NUMBER_OF_ELEMENTS = 10;
 
 	private SetOfIntegerValues(Set<Integer> values) {
 		this.values = values;
@@ -34,6 +41,8 @@ public class SetOfIntegerValues implements BaseNonRelationalValueDomain<SetOfInt
 	public SetOfIntegerValues lubAux(SetOfIntegerValues setOfIntegerValues) throws SemanticException {
 		HashSet<Integer> newValues = new HashSet<>(this.values);
 		newValues.addAll(setOfIntegerValues.values);
+		if(newValues.size() > MAX_NUMBER_OF_ELEMENTS)
+			return top();
 		return new SetOfIntegerValues(newValues);
 	}
 
@@ -87,5 +96,57 @@ public class SetOfIntegerValues implements BaseNonRelationalValueDomain<SetOfInt
 			return new SetOfIntegerValues(newValues);
 		}
 		return BaseNonRelationalValueDomain.super.evalBinaryExpression(operator, left, right, pp, oracle);
+	}
+
+	@Override
+	public Satisfiability satisfiesBinaryExpression(BinaryOperator operator, SetOfIntegerValues left, SetOfIntegerValues right, ProgramPoint pp, SemanticOracle oracle) throws SemanticException {
+		if (this.isTop())
+			return Satisfiability.UNKNOWN;
+		if (operator instanceof ComparisonLt) {
+			for (Integer i : left.values)
+				for (Integer j : right.values)
+					if (! (i<j))
+						return Satisfiability.UNKNOWN;
+			return Satisfiability.SATISFIED;
+		}
+		return BaseNonRelationalValueDomain.super.satisfiesBinaryExpression(operator, left, right, pp, oracle);
+	}
+
+	//	or using
+
+	// left operator right
+	// assumeBinaryExpression => assumer qu'une condition est binaire !
+	@Override
+	public ValueEnvironment<SetOfIntegerValues> assumeBinaryExpression(ValueEnvironment<SetOfIntegerValues> environment, BinaryOperator operator, ValueExpression left, ValueExpression right, ProgramPoint src, ProgramPoint dest, SemanticOracle oracle) throws SemanticException {
+		// if the left-hand side is a variable
+		if (left instanceof Variable) { // si j'ai une variable
+			// if the right-hand side is a constant
+			if (right instanceof Constant) {
+				// get the variable
+				Variable x = (Variable) left;
+				// get the constant
+				Constant y = (Constant) right;
+				// get the value of the constant
+				Object value = y.getValue();
+				// if the value is an integer
+				if (value instanceof Integer) {
+					// get the integer value
+					int intValue = (int) value;
+					// set the value of the variable in the environment to the new set of integer values
+					SetOfIntegerValues vals = environment.getState(x);
+
+					HashSet<Integer> possibleValues = new HashSet<>();
+					for (Integer i : vals.values)
+						if (i < (Integer) y.getValue())
+							possibleValues.add((int) i + intValue);
+
+					environment.putState(x, new SetOfIntegerValues(possibleValues));
+
+					return environment;
+				}
+			}
+		}
+
+		return BaseNonRelationalValueDomain.super.assumeBinaryExpression(environment, operator, left, right, src, dest, oracle);
 	}
 }
