@@ -8,6 +8,7 @@ import it.unive.lisa.conf.LiSAConfiguration;
 import it.unive.lisa.conf.LiSAConfiguration.GraphType;
 import it.unive.lisa.imp.IMPFrontend;
 import it.unive.lisa.imp.ParsingException;
+import it.unive.lisa.interprocedural.ReturnTopPolicy;
 import it.unive.lisa.program.Program;
 import org.junit.Test;
 
@@ -32,6 +33,8 @@ public class ConcreteValueTest {
 				DefaultConfiguration.defaultHeapDomain(),
 				new ValueEnvironment<>(ConcreteValue.TOP),
 				DefaultConfiguration.defaultTypeDomain());
+
+		conf.openCallPolicy = ReturnTopPolicy.INSTANCE;
 
 		// we instantiate LiSA with our configuration
 		LiSA lisa = new LiSA(conf);
