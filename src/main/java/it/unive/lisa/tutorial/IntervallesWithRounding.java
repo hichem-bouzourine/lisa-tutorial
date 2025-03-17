@@ -166,4 +166,28 @@ public class IntervallesWithRounding implements BaseNonRelationalValueDomain<Int
         return BaseNonRelationalValueDomain.super.evalNonNullConstant(constant, pp, oracle);
     }
 
+    @Override
+    public ValueEnvironment<IntervallesWithRounding> assumeBinaryExpression(
+            ValueEnvironment<IntervallesWithRounding> environment, BinaryOperator operator, ValueExpression left,
+            ValueExpression right, ProgramPoint src, ProgramPoint dest, SemanticOracle oracle)
+            throws SemanticException {
+
+        if (left instanceof Variable) {
+            Variable x = (Variable) left;
+            if (right instanceof Constant) {
+                Constant y = (Constant) right;
+                if (y.getValue() instanceof Integer) {
+                    Number value = (Number) y.getValue();
+                    int doubleValue = value.intValue();
+                    environment.putState(x, new IntervallesWithRounding(doubleValue, doubleValue));
+
+                    return environment;
+                }
+            }
+        }
+
+        return BaseNonRelationalValueDomain.super.assumeBinaryExpression(environment, operator, left, right, src, dest,
+                oracle);
+    }
+
 }
