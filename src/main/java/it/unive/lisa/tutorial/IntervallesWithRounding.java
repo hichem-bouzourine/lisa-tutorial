@@ -134,4 +134,36 @@ public class IntervallesWithRounding implements BaseNonRelationalValueDomain<Int
         return Math.round(value);
     }
 
+    @Override
+    public IntervallesWithRounding evalBinaryExpression(BinaryOperator operator,
+            IntervallesWithRounding left,
+            IntervallesWithRounding right, ProgramPoint pp, SemanticOracle oracle) throws SemanticException {
+
+        if (left.isTop() || right.isTop())
+            return top();
+        if (left.isBottom() || right.isBottom())
+            return bottom();
+
+        if (operator instanceof AdditionOperator) {
+            return left.add(right);
+        } else if (operator instanceof SubtractionOperator) {
+            return left.subtract(right);
+        } else if (operator instanceof MultiplicationOperator) {
+            return left.multiply(right);
+        } else if (operator instanceof DivisionOperator) {
+            return left.divide(right);
+        }
+        return BaseNonRelationalValueDomain.super.evalBinaryExpression(operator,
+                left, right, pp, oracle);
+    }
+
+    @Override
+    public IntervallesWithRounding evalNonNullConstant(Constant constant, ProgramPoint pp, SemanticOracle oracle)
+            throws SemanticException {
+        if (constant.getValue() instanceof Integer)
+            return new IntervallesWithRounding((Integer) constant.getValue(), (Integer) constant.getValue());
+
+        return BaseNonRelationalValueDomain.super.evalNonNullConstant(constant, pp, oracle);
+    }
+
 }
