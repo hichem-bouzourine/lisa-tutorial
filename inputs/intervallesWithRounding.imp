@@ -1,0 +1,11 @@
+class IntervallesWithRoundingTest {
+    basic() {
+        def i = 4;
+        def j = 2.4;
+        def a = i + j;
+        def s = i - j;
+        def m = i * j;
+        def d = i / j;
+    }
+
+}
