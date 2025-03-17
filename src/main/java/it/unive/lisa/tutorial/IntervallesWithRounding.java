@@ -19,10 +19,10 @@ import it.unive.lisa.util.representation.StructuredRepresentation;
 import java.util.Set;
 
 public class IntervallesWithRounding implements BaseNonRelationalValueDomain<IntervallesWithRounding> {
-    public static final IntervallesWithRounding BOTTOM = new IntervallesWithRounding(Double.NEGATIVE_INFINITY,
-            Double.POSITIVE_INFINITY);
-    public static final IntervallesWithRounding TOP = new IntervallesWithRounding(Double.NEGATIVE_INFINITY,
-            Double.POSITIVE_INFINITY);
+    public static final IntervallesWithRounding BOTTOM = new IntervallesWithRounding(Double.MIN_VALUE,
+            Double.MAX_VALUE);
+    public static final IntervallesWithRounding TOP = new IntervallesWithRounding(Double.MIN_VALUE,
+            Double.MAX_VALUE);
 
     private final double min, max;
 
