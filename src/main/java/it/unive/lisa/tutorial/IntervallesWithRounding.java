@@ -112,6 +112,14 @@ public class IntervallesWithRounding implements BaseNonRelationalValueDomain<Int
     }
 
     @Override
+    public IntervallesWithRounding widening(IntervallesWithRounding other) throws SemanticException {
+        IntOrInf newMin = this.min.lessOrEqual(other.min) ? this.min : IntOrInf.negativeInfinity();
+        IntOrInf newMax = this.max.greaterOrEqual(other.max) ? this.max : IntOrInf.positiveInfinity();
+
+        return new IntervallesWithRounding(newMin, newMax);
+    }
+
+    @Override
     public IntervallesWithRounding evalBinaryExpression(BinaryOperator operator,
             IntervallesWithRounding left,
             IntervallesWithRounding right,

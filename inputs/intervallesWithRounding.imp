@@ -8,4 +8,20 @@ class IntervallesWithRoundingTest {
         def d = i / j;
     }
 
+    conditional() {
+        def x = 10.0;
+        def y = 3.0;
+        def z = 2.0;
+        
+        while (z < 5.0) {
+            z = z + 1.0;
+        }
+
+        if (x > 5.0) {
+            y = y * 2.0;
+        } else {
+            y = y / 2.0;
+        }
+    }
+
 }
