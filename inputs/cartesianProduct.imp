@@ -1,0 +1,46 @@
+class cartesianProduct {
+    /* Tests interactions between interval arithmetic and relational inequalities */
+    mixed_arithmetic_relations() {
+        // Initial variable setup with both precise and relational constraints
+        def base = 2;           // [2,2]
+        def coeff = -3;         // [-3,-3]
+        def x = base * 5;       // [10,10] (interval) | x = 5*base (relation)
+        def y = coeff * x;      // [-30,-30] (interval) | y = -3*x (relation)
+        
+        // Conditional that requires both domains to cooperate
+        if (x + y <= -15) {     // Tests: [10,10] + [-30,-30] = [-20,-20] ≤ -15 (true)
+                                // AND relational: x + y = 5*base + (-3)*(5*base) = -10*base
+            def z = x / y;      // [10,10]/[-30,-30] = [-0.333,-0.333] (interval)
+                                // Relational: z = x/y = (5*base)/(-15*base) = -1/3
+        }
+        
+        // Loop with mixed constraints
+        def i = 0;              // [0,0]
+        while (i < x) {         // i < 10 (interval) | i < 5*base (relation)
+            y = y + coeff;      // y += -3 → interval: [-30,-30] → [-33,-33] → ...
+                                // relation: y = -3*(x + i) because coeff = -3
+            i = i + base;       // i += 2 → [0,0] → [2,2] → ... [10,10]
+        }
+        // Post-loop:
+        // Interval: i=[10,10], y=[-30 - 3*5, -30 - 3*5] = [-45,-45]
+        // Relational: y = -3*(x + i) = -3*(5*base + base*(loop count)) 
+    }
+
+    /* Tests sign analysis across both domains */
+    sign_analysis() {
+        def positive = 5;       // [5,5]
+        def negative = -2;      // [-2,-2]
+        def unknown = positive + negative; // [3,3] but relation: unknown = 5 + (-2)
+        
+        // Multiplication preserves sign relationships
+        def prod1 = positive * negative;    // [-10,-10] and relation: prod1 = 5*(-2)
+        def prod2 = unknown * negative;     // [-6,-6] and relation: prod2 = (5-2)*(-2)
+        
+        // Division with sign constraints
+        if (prod2 / prod1 > 0) {    // Tests: [-6,-6]/[-10,-10] = [0.6,0.6] > 0 (true)
+                                    // AND relational: ( (5-2)*(-2) )/(5*(-2)) = 0.6
+            def result = prod2 / positive; // [-6,-6]/[5,5] = [-1.2,-1.2]
+                                           // relation: ((5-2)*(-2))/5 = -1.2
+        }
+    }
+}

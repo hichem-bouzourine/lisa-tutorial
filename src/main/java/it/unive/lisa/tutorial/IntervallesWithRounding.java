@@ -25,7 +25,7 @@ public class IntervallesWithRounding implements BaseNonRelationalValueDomain<Int
     private final IntOrInf min, max;
     private static final int PRECISION = 2; // Number of decimal places for rounding
 
-    private IntervallesWithRounding(IntOrInf min, IntOrInf max) {
+    public IntervallesWithRounding(IntOrInf min, IntOrInf max) {
         this.min = min;
         this.max = max;
     }
@@ -174,7 +174,7 @@ public class IntervallesWithRounding implements BaseNonRelationalValueDomain<Int
         return environment;
     }
 
-    private static class IntOrInf {
+    public static class IntOrInf {
         private final double value;
         private final boolean isPositiveInfinity;
         private final boolean isNegativeInfinity;
@@ -185,7 +185,7 @@ public class IntervallesWithRounding implements BaseNonRelationalValueDomain<Int
             this.isNegativeInfinity = false;
         }
 
-        private IntOrInf(boolean isPositiveInfinity, boolean isNegativeInfinity) {
+        public IntOrInf(boolean isPositiveInfinity, boolean isNegativeInfinity) {
             this.value = 0;
             this.isPositiveInfinity = isPositiveInfinity;
             this.isNegativeInfinity = isNegativeInfinity;

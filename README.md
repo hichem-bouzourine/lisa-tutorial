@@ -9,7 +9,7 @@ in my code I've defined a helping class (`IntOrInf`) that represents an integer 
 and it extends the representation of `+∞` and `-∞`, there I define the rounding function that rounds 
 the value with a given precision.
 
-in the core class we find a TOP value that represents the top of the domain , and a BOTTOM value 
+in the core class I find a TOP value that represents the top of the domain , and a BOTTOM value 
 that represents the bottom of the domain that I respectively defined as `+∞` and `-∞`. and I've defined a 
 default precision of 2 for the rounding function.
 
@@ -130,7 +130,7 @@ Key Features:
 1. Initial State: TOP (no constraints)
 
 2. Assignment x = 1:
-    - Not tracked directly (we focus on relationships between variables)
+    - Not tracked directly (I focus on relationships between variables)
     - State remains TOP
 
 3. Assignment y = x + 1:
@@ -236,7 +236,7 @@ Key Features:
 - Solution: Widening: Force convergence by setting x to [0, +∞] after a few iterations.
 
 2. Transitive Constraint Propagation
-- Problem: Given x ≤ y and y ≤ z, we should infer x ≤ z, but naive implementations miss this.
+- Problem: Given x ≤ y and y ≤ z, I should infer x ≤ z, but naive implementations miss this.
 - Solution: Transitive Closure: Detect common variables and derive new constraints (e.g., y + z ≤ 4 in Example 2).
 
 3. Precision vs. Performance Trade-off: 
@@ -244,3 +244,58 @@ Key Features:
 - Solution: Focus on 2-Variable Inequalities: Limit constraints to a·x + b·y ≤ c for scalability.
 
 
+# Explanation of Cartesian Product:
+## Class code Explanation:
+A Cartesian product domain combining:
+ * . TwoVariablesPerLinearInequality (left component): Tracks relational inequalities between variables (a·x + b·y ≤ c)
+ * . ValueEnvironment<IntervallesWithRounding> (right component): Maintains interval bounds with rounding for individual variables
+ This combination enables both relational and non-relational analysis simultaneously.
+
+## Examples Explanation:
+Key Differences From Original Test:
+
+1. Domain Interaction Points:
+
+    - The mixed_arithmetic_relations test specifically forces collaboration between:
+
+    - Interval arithmetic ([10,10] + [-30,-30])
+
+    - Relational reasoning (y = -3*x)
+
+    - The loop maintains both precise interval bounds and relational formulas
+
+2. Sign Analysis Focus:
+
+    - sign_analysis verifies consistent sign tracking across:
+
+    - Direct interval calculations (e.g., [-6,-6]/[-10,-10])
+
+    - Relational expressions (e.g., prod1 = 5*(-2))
+
+    - Includes a division condition that must agree in both domains
+
+3. Complex Loop Case:
+
+    - The while loop accumulates:
+
+    - Interval updates (y from -30 to -45 in discrete jumps)
+
+    - Relational updates (y = -3*(x + i))
+
+    - Tests whether the product domain can maintain both perspectives
+
+4. Precision Verification:
+
+    - Each operation has an obvious mathematical outcome that both domains should agree on
+
+    - For example x / y must be -0.333 in intervals AND -1/3 in relations
+
+* This test stresses the cartesian product by:
+
+	- Requiring interval precision on concrete bounds
+
+	- Maintaining algebraic relationships
+
+	- Verifying agreement between the domains at key points
+
+	- Handling both discrete operations and control flow
