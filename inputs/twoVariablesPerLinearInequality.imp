@@ -1,0 +1,37 @@
+class twoVariablesPerLinearInequality {
+    basic() {
+        def x = 1;          // x = 1
+        def y = x + 1;      // y = x + 1 → y - x ≤ 1
+        def z = 2*x + 1;    // z = 2x + 1 → z - 2x ≤ 1
+        if (x <= y) {       // x ≤ y → x - y ≤ 0
+            def d = 3;
+        }
+    }
+    transitivity() {
+        def x = 1;
+        def y = -1*x + 1;   // y + x ≤ 1
+        def z = x + 3;      // z - x ≤ 3
+        // Implicit: y + x ≤ 1 ∧ z - x ≤ 3 → y + z ≤ 4 (via transitive closure)
+    }
+    
+    loopWithConstraints() {
+        def x = 0;
+        def y = 1;
+        while (x < 5) {          // x ≤ 4 (widening applied)
+            y = y + 1;           // y = y + 1 → y - y_prev ≤ 1
+            x = x + 1;           // x = x + 1 → x - x_prev ≤ 1
+        }
+        // Post-loop: x ≥ 5, y ≥ 6
+    }
+    
+    nestedConditionals() {
+        def x = 1;
+        def y = 2;
+        if (3*x + 2*y <= 3) {   // 3x + 2y ≤ 3
+            if (x <= y) {        // x ≤ y
+                def d = 2;       // Both conditions active
+            }
+        }
+    }
+    
+}
